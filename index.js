@@ -2,6 +2,7 @@ import { tweetsData } from './data.js'
 import { v4 as uuidv4 } from 'https://jspm.dev/uuid';
 
 document.addEventListener('click', function(e){
+    
     if(e.target.dataset.like){
        handleLikeClick(e.target.dataset.like) 
     }
@@ -13,6 +14,10 @@ document.addEventListener('click', function(e){
     }
     else if(e.target.id === 'tweet-btn'){
         handleTweetBtnClick()
+    }
+    else if(e.target.dataset.tweet || e.target.dataset.tweetText || e.target.dataset.tweetDetails){
+        const tweetId = e.target.dataset.tweet || e.target.dataset.tweetText || e.target.dataset.tweetDetails;
+        handleTweetClick(tweetId);
     }
 })
  
@@ -71,6 +76,67 @@ function handleTweetBtnClick(){
 
 }
 
+function handleTweetClick(tweetId){
+    const tweetModal = document.getElementById('tweet-modal');
+    const tweetModalContent = document.getElementById('tweet-modal-content');
+    let tweet = {};
+    tweetModal.style.display = 'block';
+
+    let likeIconClass = ''
+        
+        if (tweet.isLiked){
+            likeIconClass = 'liked'
+        }
+        
+        let retweetIconClass = ''
+        
+        if (tweet.isRetweeted){
+            retweetIconClass = 'retweeted'
+        }
+
+    for(let i=0; i<tweetsData.length; i++){
+        if (tweetId === tweetsData[i].uuid){
+            tweet = tweetsData[i];
+        }
+    }
+    console.log(tweet);
+    tweetModalContent.innerHTML = `
+                                    <div class="tweet" >
+                                        <div class="tweet-inner" data-tweet="${tweet.uuid}">
+                                            <img src="${tweet.profilePic}" class="profile-pic">
+                                            <div>
+                                                <p class="handle">${tweet.handle}</p>
+                                                <p class="tweet-text" data-tweet-text="${tweet.uuid}">${tweet.tweetText}</p>
+                                                <div class="tweet-details" data-tweet-details="${tweet.uuid}">
+                                                    <span class="tweet-detail">
+                                                        <i class="fa-regular fa-comment-dots"
+                                                        data-reply="${tweet.uuid}"
+                                                        ></i>
+                                                        ${tweet.replies.length}
+                                                    </span>
+                                                    <span class="tweet-detail">
+                                                        <i class="fa-solid fa-heart ${likeIconClass}"
+                                                        data-like="${tweet.uuid}"
+                                                        ></i>
+                                                        ${tweet.likes}
+                                                    </span>
+                                                    <span class="tweet-detail">
+                                                        <i class="fa-solid fa-retweet ${retweetIconClass}"
+                                                        data-retweet="${tweet.uuid}"
+                                                        ></i>
+                                                        ${tweet.retweets}
+                                                    </span>
+                                                </div>   
+                                            </div>            
+                                        </div>
+                                        <div class="hidden" id="replies-${tweet.uuid}">
+                                            
+                                        </div>   
+                                    </div>
+                                    `
+
+}
+
 function getFeedHtml(){
     let feedHtml = ``
     
@@ -108,13 +174,13 @@ function getFeedHtml(){
         
           
         feedHtml += `
-                    <div class="tweet">
-                        <div class="tweet-inner">
+                    <div class="tweet" >
+                        <div class="tweet-inner" data-tweet="${tweet.uuid}">
                             <img src="${tweet.profilePic}" class="profile-pic">
                             <div>
                                 <p class="handle">${tweet.handle}</p>
-                                <p class="tweet-text">${tweet.tweetText}</p>
-                                <div class="tweet-details">
+                                <p class="tweet-text" data-tweet-text="${tweet.uuid}">${tweet.tweetText}</p>
+                                <div class="tweet-details" data-tweet-details="${tweet.uuid}">
                                     <span class="tweet-detail">
                                         <i class="fa-regular fa-comment-dots"
                                         data-reply="${tweet.uuid}"
