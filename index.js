@@ -53,7 +53,7 @@ function handleRetweetClick(tweetId){
 }
 
 function handleReplyClick(replyId){
-    document.getElementById(`replies-${replyId}`).classList.toggle('hidden')
+    document.getElementById(`reply-input-area-${replyId}`).classList.toggle('hidden')
 }
 
 function handleTweetBtnClick(){
@@ -82,7 +82,7 @@ function handleTweetClick(tweetId){
     const tweetModalContent = document.getElementById('tweet-modal-content');
 
     tweetModal.style.display = 'block';
-    tweetModalContent.innerHTML = buildTweet(tweetId);
+    tweetModalContent.innerHTML = modalTweet(tweetId);
 
     tweetModal.addEventListener('click', function(e){
         if (e.target === this){
@@ -160,13 +160,18 @@ function getFeedHtml(){
                         <div class="hidden" id="replies-${tweet.uuid}">
                             ${repliesHtml}
                         </div>   
+                        <div id="reply-input-area-${tweet.uuid}" class="hidden">
+                            <img src="images/scrimbalogo.png" class="profile-pic">
+                            <textarea id="reply-input">${tweet.handle} </textarea>
+                            <button id="reply-btn">Reply</button>
+                        </div>
                     </div>
                     `
    })
    return feedHtml 
 }
 
-function buildTweet(tweetId){
+function modalTweet(tweetId){
     let tweetHtml = '';
 
     tweetsData.forEach(function(tweet){
@@ -174,56 +179,79 @@ function buildTweet(tweetId){
         if(tweet.uuid === tweetId){
             let likeIconClass = ''
         
-        if (tweet.isLiked){
-            likeIconClass = 'liked'
-        }
-        
-        let retweetIconClass = ''
-        
-        if (tweet.isRetweeted){
-            retweetIconClass = 'retweeted'
-        }
-
-        for(let i=0; i<tweetsData.length; i++){
-            if (tweetId === tweetsData[i].uuid){
-                tweet = tweetsData[i];
+            if (tweet.isLiked){
+                likeIconClass = 'liked'
             }
-        }
-        
-        tweetHtml = `
-                                        <div class="tweet" >
-                                            <div class="tweet-inner" data-tweet="${tweet.uuid}">
-                                                <img src="${tweet.profilePic}" class="profile-pic">
-                                                <div>
-                                                    <p class="handle">${tweet.handle}</p>
-                                                    <p class="tweet-text" data-tweet-text="${tweet.uuid}">${tweet.tweetText}</p>
-                                                    <div class="tweet-details" data-tweet-details="${tweet.uuid}">
-                                                        <span class="tweet-detail">
-                                                            <i class="fa-regular fa-comment-dots"
-                                                            data-reply="${tweet.uuid}"
-                                                            ></i>
-                                                            ${tweet.replies.length}
-                                                        </span>
-                                                        <span class="tweet-detail">
-                                                            <i class="fa-solid fa-heart ${likeIconClass}"
-                                                            data-like="${tweet.uuid}"
-                                                            ></i>
-                                                            ${tweet.likes}
-                                                        </span>
-                                                        <span class="tweet-detail">
-                                                            <i class="fa-solid fa-retweet ${retweetIconClass}"
-                                                            data-retweet="${tweet.uuid}"
-                                                            ></i>
-                                                            ${tweet.retweets}
-                                                        </span>
-                                                    </div>   
-                                                </div>            
+            
+            let retweetIconClass = ''
+            
+            if (tweet.isRetweeted){
+                retweetIconClass = 'retweeted'
+            }
+
+            for(let i=0; i<tweetsData.length; i++){
+                if (tweetId === tweetsData[i].uuid){
+                    tweet = tweetsData[i];
+                }
+            }
+
+            let repliesHtml = ''
+            
+            if(tweet.replies.length > 0){
+                tweet.replies.forEach(function(reply){
+                    repliesHtml+=`
+                                <div class="tweet-reply">
+                                    <div class="tweet-inner">
+                                        <img src="${reply.profilePic}" class="profile-pic">
+                                            <div>
+                                                <p class="handle">${reply.handle}</p>
+                                                <p class="tweet-text">${reply.tweetText}</p>
                                             </div>
-                                            <div class="hidden" id="replies-${tweet.uuid}">
-                                                
-                                            </div>   
                                         </div>
-                                        `
+                                </div>
+                                `
+                })
+            }
+            
+            tweetHtml = `
+                                            <div class="tweet" >
+                                                <div class="tweet-inner" data-tweet="${tweet.uuid}">
+                                                    <img src="${tweet.profilePic}" class="profile-pic">
+                                                    <div>
+                                                        <p class="handle">${tweet.handle}</p>
+                                                        <p class="tweet-text" data-tweet-text="${tweet.uuid}">${tweet.tweetText}</p>
+                                                        <div class="tweet-details" data-tweet-details="${tweet.uuid}">
+                                                            <span class="tweet-detail">
+                                                                <i class="fa-regular fa-comment-dots"
+                                                                data-reply="${tweet.uuid}"
+                                                                ></i>
+                                                                ${tweet.replies.length}
+                                                            </span>
+                                                            <span class="tweet-detail">
+                                                                <i class="fa-solid fa-heart ${likeIconClass}"
+                                                                data-like="${tweet.uuid}"
+                                                                ></i>
+                                                                ${tweet.likes}
+                                                            </span>
+                                                            <span class="tweet-detail">
+                                                                <i class="fa-solid fa-retweet ${retweetIconClass}"
+                                                                data-retweet="${tweet.uuid}"
+                                                                ></i>
+                                                                ${tweet.retweets}
+                                                            </span>
+                                                        </div>   
+                                                    </div>            
+                                                </div>
+                                                <div id="reply-input-area-${tweet.uuid}">
+                                                    <img src="images/scrimbalogo.png" class="profile-pic">
+                                                    <textarea id="reply-input">${tweet.handle} </textarea>
+                                                    <button id="reply-btn">Reply</button>
+                                                </div>
+                                                <div id="replies-${tweet.uuid}">
+                                                    ${repliesHtml}
+                                                </div>
+                                            </div>
+                                            `
         }
 
     })
@@ -233,7 +261,7 @@ function buildTweet(tweetId){
 
 function render(tweetId){
     document.getElementById('feed').innerHTML = getFeedHtml()
-    document.getElementById('tweet-modal-content').innerHTML = buildTweet(tweetId);
+    document.getElementById('tweet-modal-content').innerHTML = modalTweet(tweetId);
 }
 
 render()
