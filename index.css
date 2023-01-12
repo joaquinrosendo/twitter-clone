@@ -59,6 +59,15 @@ header{
     background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
 }
 
+#tweet-modal-content {
+    background-color: white;
+    width: 300px;
+    padding: 2rem;
+    margin-right: auto;
+    margin-left: auto;
+    margin-top: 10%;
+}
+
 /* textareas + btn */
 
 textarea{

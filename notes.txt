@@ -1,5 +1,5 @@
 Reply function: 
-- Make tweets clickable, hover over and change color
+-/ Make tweets clickable, hover over and change color
 - When clicked, modal of tweet and its replies appear
     - comments button is now reply button   
     - textarea appears above other tweets when comments button clicked
