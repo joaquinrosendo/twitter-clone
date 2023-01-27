@@ -10,7 +10,7 @@ document.addEventListener('click', function(e){
         handleRetweetClick(e.target.dataset.retweet)
     }
     else if(e.target.dataset.reply){
-        handleReplyClick(e.target.dataset.reply)
+        handleViewCommentsClick(e.target.dataset.reply)
     }
     else if(e.target.id === 'tweet-btn'){
         handleTweetBtnClick()
@@ -18,6 +18,9 @@ document.addEventListener('click', function(e){
     else if(e.target.dataset.tweet || e.target.dataset.tweetText || e.target.dataset.tweetDetails){
         const tweetId = e.target.dataset.tweet || e.target.dataset.tweetText || e.target.dataset.tweetDetails;
         handleTweetClick(tweetId);
+    }
+    else if(e.target.dataset.replyInput){
+        handleReplyBtnClick(e.target.dataset.replyInput);
     }
         
 })
@@ -52,7 +55,7 @@ function handleRetweetClick(tweetId){
     render(tweetId)
 }
 
-function handleReplyClick(replyId){
+function handleViewCommentsClick(replyId){
     document.getElementById(`reply-input-area-${replyId}`).classList.toggle('hidden')
 }
 
@@ -90,6 +93,14 @@ function handleTweetClick(tweetId){
         }
     });
     
+}
+
+function handleReplyBtnClick(tweetId){
+    const replies = document.getElementById(`replies-${tweetId}`);
+    const replyInput = document.getElementById('reply-input').value;
+
+    console.log(replyInput);
+
 }
 
 function getFeedHtml(){
@@ -244,8 +255,8 @@ function modalTweet(tweetId){
                             </div>
                             <div id="reply-input-area-${tweet.uuid}" >
                                 <img src="images/scrimbalogo.png" class="profile-pic">
-                                <textarea id="reply-input">${tweet.handle} </textarea>
-                                <button id="reply-btn">Reply</button>
+                                <textarea id="reply-input-${tweet.uuid}" data-reply-input="reply-input-${tweet.uuid}">${tweet.handle} </textarea>
+                                <button id="reply-btn-${tweet.uuid}" data-reply-btn="reply-btn-${tweet.uuid}">Reply</button>
                             </div>
                             <div id="replies-${tweet.uuid}">
                                 ${repliesHtml}
