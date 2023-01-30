@@ -19,8 +19,8 @@ document.addEventListener('click', function(e){
         const tweetId = e.target.dataset.tweet || e.target.dataset.tweetText || e.target.dataset.tweetDetails;
         handleTweetClick(tweetId);
     }
-    else if(e.target.dataset.replyInput){
-        handleReplyBtnClick(e.target.dataset.replyInput);
+    else if(e.target.dataset.replyBtn){
+        handleReplyBtnClick(e.target.dataset.replyBtn);
     }
         
 })
@@ -96,11 +96,20 @@ function handleTweetClick(tweetId){
 }
 
 function handleReplyBtnClick(tweetId){
-    const replies = document.getElementById(`replies-${tweetId}`);
-    const replyInput = document.getElementById('reply-input').value;
+    let inputText = document.getElementById(`reply-input-${tweetId}`).value;
 
-    console.log(replyInput);
-
+    for(let i=0; i<tweetsData.length; i++){
+        if(tweetsData[i].uuid === tweetId){
+            tweetsData[i].replies.unshift({
+                handle: `@Scrimba`,
+                profilePic: `images/scrimbalogo.png`,
+                tweetText: inputText,
+            })
+        }
+    }
+    render();
+    handleTweetClick(tweetId);
+    
 }
 
 function getFeedHtml(){
@@ -256,7 +265,7 @@ function modalTweet(tweetId){
                             <div id="reply-input-area-${tweet.uuid}" >
                                 <img src="images/scrimbalogo.png" class="profile-pic">
                                 <textarea id="reply-input-${tweet.uuid}" data-reply-input="reply-input-${tweet.uuid}">${tweet.handle} </textarea>
-                                <button id="reply-btn-${tweet.uuid}" data-reply-btn="reply-btn-${tweet.uuid}">Reply</button>
+                                <button id="reply-btn-${tweet.uuid}" data-reply-btn="${tweet.uuid}">Reply</button>
                             </div>
                             <div id="replies-${tweet.uuid}">
                                 ${repliesHtml}
@@ -271,7 +280,7 @@ function modalTweet(tweetId){
 }
 
 function render(tweetId){
-    document.getElementById('feed').innerHTML = getFeedHtml()
+    document.getElementById('feed').innerHTML = getFeedHtml();
     document.getElementById('tweet-modal-content').innerHTML = modalTweet(tweetId);
 }
 
