@@ -15,10 +15,6 @@ document.addEventListener('click', function(e){
     else if(e.target.id === 'tweet-btn'){
         handleTweetBtnClick()
     }
-    else if(e.target.dataset.tweet || e.target.dataset.tweetText || e.target.dataset.tweetDetails){
-        const tweetId = e.target.dataset.tweet || e.target.dataset.tweetText || e.target.dataset.tweetDetails;
-        handleTweetClick(tweetId);
-    }
     else if(e.target.dataset.replyBtn){
         handleReplyBtnClick(e.target.dataset.replyBtn);
     }
@@ -55,8 +51,18 @@ function handleRetweetClick(tweetId){
     render(tweetId)
 }
 
-function handleViewCommentsClick(replyId){
-    document.getElementById(`reply-input-area-${replyId}`).classList.toggle('hidden')
+function handleViewCommentsClick(tweetId){
+    const tweetModal = document.getElementById('tweet-modal');
+    const tweetModalContent = document.getElementById('tweet-modal-content');
+
+    tweetModal.style.display = 'block';
+    tweetModalContent.innerHTML = modalTweet(tweetId);
+
+    tweetModal.addEventListener('click', function(e){
+        if (e.target === this){
+            tweetModal.style.display = 'none';
+        }
+    });
 }
 
 function handleTweetBtnClick(){
@@ -80,21 +86,6 @@ function handleTweetBtnClick(){
 
 }
 
-function handleTweetClick(tweetId){
-    const tweetModal = document.getElementById('tweet-modal');
-    const tweetModalContent = document.getElementById('tweet-modal-content');
-
-    tweetModal.style.display = 'block';
-    tweetModalContent.innerHTML = modalTweet(tweetId);
-
-    tweetModal.addEventListener('click', function(e){
-        if (e.target === this){
-            tweetModal.style.display = 'none';
-        }
-    });
-    
-}
-
 function handleReplyBtnClick(tweetId){
     let inputText = document.getElementById(`reply-input-${tweetId}`).value;
 
@@ -108,8 +99,7 @@ function handleReplyBtnClick(tweetId){
         }
     }
     render();
-    handleTweetClick(tweetId);
-    
+    handleViewCommentsClick(tweetId);
 }
 
 function getFeedHtml(){

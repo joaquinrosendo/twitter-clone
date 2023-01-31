@@ -123,11 +123,6 @@ button{
     z-index: 5;
 }
 
-.tweet:hover {
-    background-color: #F0F0F0;
-    cursor: pointer;
-}
-
 #tweet-modal-content .tweet:hover {
     background-color: white;
     cursor: default;
